@@ -187,7 +187,8 @@
       var powerHelp = document.getElementById("power-question-help");
       if (powerLabel) powerLabel.textContent = powerIncluded ? "Do you need any additional power sockets for £100 + VAT per socket?" : "Do you need power on your stand for an additional £100 + VAT per socket?";
       if (powerHelp) powerHelp.textContent = powerIncluded ? "Your selected space includes standard power. Select Yes only if you need additional sockets. Charities, government and blue light organisations qualify for a 50% discount on additional sockets." : "Unless indicated here, power may not be possible. Charities, government and blue light organisations qualify for a 50% discount.";
-      var base = space ? Number(space.dataset.price || 0) : 0;
+      var priceOnApplication = Boolean(space && space.dataset.price === "poa");
+      var base = space && !priceOnApplication ? Number(space.dataset.price || 0) : 0;
       var category = document.getElementById("organisation-category");
       var discounted = category && /Charity|Government|Blue Light/.test(category.value);
       var socketCount = Number((document.getElementById("power-count") || {}).value || 0);
@@ -195,7 +196,12 @@
       var power = checkedValue("power-required") === "Yes" ? socketCount * (discounted ? 50 : 100) : 0;
       var staff = checkedValue("additional-staff-required") === "Yes" ? staffCount * 50 : 0;
       var total = base + power + staff;
-      if (output) output.textContent = space ? "Indicative ex-VAT total: " + new Intl.NumberFormat("en-GB", {style:"currency",currency:"GBP"}).format(total) : "Select a space to see an indicative ex-VAT total.";
+      if (output) {
+        if (!space) output.textContent = "Select a space to see an indicative ex-VAT total.";
+        else if (priceOnApplication && total) output.textContent = "Listed add-ons: " + new Intl.NumberFormat("en-GB", {style:"currency",currency:"GBP"}).format(total) + " plus the space price on application.";
+        else if (priceOnApplication) output.textContent = "Space price on application.";
+        else output.textContent = "Indicative ex-VAT total: " + new Intl.NumberFormat("en-GB", {style:"currency",currency:"GBP"}).format(total);
+      }
       var discount = document.querySelector("[data-power-discount]");
       if (discount) discount.textContent = discounted ? "Your selected organisation category appears eligible for the 50% power discount; Mission Community will verify eligibility." : "Charities, government and blue-light organisations qualify for a 50% power discount.";
     }
