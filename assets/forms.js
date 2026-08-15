@@ -13,6 +13,17 @@
     Website: "URL",
     Salutation: "salutation"
   };
+  var standardFieldLimits = {
+    Company: 255,
+    FirstName: 40,
+    LastName: 80,
+    Email: 80,
+    Phone: 40,
+    MobilePhone: 40,
+    Title: 128,
+    Website: 255,
+    Salutation: 40
+  };
 
   function setStatus(form, message, type) {
     var status = form.querySelector("[data-form-status]");
@@ -79,6 +90,14 @@
         document.querySelectorAll('input[type="radio"][name="' + source.name + '"]').forEach(function (radio) { radio.addEventListener("change", sync); });
       }
       sync();
+    });
+  }
+
+  function configureFieldConstraints() {
+    document.querySelectorAll("[data-sf-field]").forEach(function (control) {
+      if (!/^(INPUT|TEXTAREA)$/.test(control.tagName) || /^(checkbox|radio|hidden)$/i.test(control.type || "")) return;
+      var limit = standardFieldLimits[control.dataset.sfField] || (config.fieldLimits || {})[control.dataset.sfField];
+      if (limit && !control.hasAttribute("maxlength")) control.maxLength = limit;
     });
   }
 
@@ -194,6 +213,7 @@
       if (!api) return;
       if ((control.type === "checkbox" || control.type === "radio") && !control.checked) return;
       var value = control.type === "checkbox" && api === "Terms_and_Conditions__c" ? "1" : control.value;
+      if (typeof value === "string") value = value.trim();
       if (value === "") return;
       if (!grouped[api]) grouped[api] = [];
       grouped[api].push(value);
@@ -243,8 +263,25 @@
   function enableForms() {
     document.querySelectorAll("form[data-web-to-lead]").forEach(function (form) {
       populateSystemFields(form);
+      var honeypot = document.createElement("input");
+      honeypot.type = "text";
+      honeypot.name = "website_confirm";
+      honeypot.tabIndex = -1;
+      honeypot.autocomplete = "off";
+      honeypot.setAttribute("aria-hidden", "true");
+      honeypot.style.position = "absolute";
+      honeypot.style.left = "-10000px";
+      honeypot.style.width = "1px";
+      honeypot.style.height = "1px";
+      honeypot.dataset.formHoneypot = "";
+      form.appendChild(honeypot);
       form.addEventListener("submit", function (event) {
         event.preventDefault();
+        if (form.dataset.submitting === "true") return;
+        if (honeypot.value) {
+          setStatus(form, "Your submission could not be processed. Please reload the page and try again.", "error");
+          return;
+        }
         populateSystemFields(form);
         syncCombinedFields(form);
         var incompleteGroup = Array.prototype.slice.call(form.querySelectorAll("[data-required-checkbox-group]")).find(function (group) {
@@ -278,6 +315,13 @@
           setStatus(form, "Submission is disabled because Salesforce field IDs are missing for: " + missing.join(", ") + ".", "error");
           return;
         }
+        form.dataset.submitting = "true";
+        form.setAttribute("aria-busy", "true");
+        form.querySelectorAll('[type="submit"]').forEach(function (button) {
+          button.disabled = true;
+          button.dataset.originalText = button.textContent;
+          button.textContent = "Submitting…";
+        });
         submitToSalesforce(form, grouped);
       });
       form.addEventListener("input", function () { syncCombinedFields(form); });
@@ -286,6 +330,7 @@
 
   configureShell();
   enableConditionalSections();
+  configureFieldConstraints();
   setupPackageSummary();
   setupExhibitorEstimate();
   enableForms();

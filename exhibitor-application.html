@@ -23,6 +23,7 @@
       <input type="hidden" data-sf-field="Booking_Reference__c">
       <input type="hidden" data-combine-fields="contact-first-name,contact-last-name" data-sf-field="Event_Contact_Name__c">
       <input type="hidden" data-copy-value-from="email" data-sf-field="Event_Contact_Email__c">
+      <input type="hidden" data-copy-value-from="job-title" data-sf-field="Event_Contact_Title__c">
 
       <section class="card">
         <h2>Join us at NTE27</h2>
@@ -44,7 +45,7 @@
       <section class="card" id="contact">
         <h2><span class="section-number">2</span>Main contact</h2>
         <div class="grid">
-          <div class="field"><label for="salutation">Title / prefix</label><input id="salutation" autocomplete="honorific-prefix" data-sf-field="Salutation"></div>
+          <div class="field"><label for="salutation">Title / prefix</label><select id="salutation" autocomplete="honorific-prefix" data-sf-field="Salutation"><option value="">Select</option><option>Mr.</option><option>Ms.</option><option>Mrs.</option><option>Dr.</option><option>Prof.</option><option>Mx.</option></select></div>
           <div class="field"><label class="required" for="contact-first-name">First name</label><input id="contact-first-name" required autocomplete="given-name" data-sf-field="FirstName"></div>
           <div class="field"><label class="required" for="contact-last-name">Surname</label><input id="contact-last-name" required autocomplete="family-name" data-sf-field="LastName"></div>
           <div class="field"><label class="required" for="job-title">Job title</label><input id="job-title" required autocomplete="organization-title" data-sf-field="Title"></div>
