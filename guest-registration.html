@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;550;650;750;800&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="assets/styles.css?v=20260811-1">
+  <link rel="stylesheet" href="assets/styles.css?v=20260815-2">
 </head>
 <body>
   <header class="site-header">
@@ -41,8 +41,8 @@
         </div>
         <div class="conditional" data-conditional-for="guest-accompanying" data-conditional-value="Yes">
           <div class="grid">
-            <div class="field"><label class="required" for="guest-companion-first-name">First name</label><input id="guest-companion-first-name" data-required-when-visible autocomplete="given-name"></div>
-            <div class="field"><label class="required" for="guest-companion-last-name">Surname</label><input id="guest-companion-last-name" data-required-when-visible autocomplete="family-name"></div>
+            <div class="field"><label class="required" for="guest-companion-first-name">First name</label><input id="guest-companion-first-name" maxlength="40" data-required-when-visible autocomplete="given-name"></div>
+            <div class="field"><label class="required" for="guest-companion-last-name">Surname</label><input id="guest-companion-last-name" maxlength="80" data-required-when-visible autocomplete="family-name"></div>
             <div class="field full"><label class="required" for="guest-companion-email">Email address</label><input id="guest-companion-email" type="email" data-required-when-visible autocomplete="email" data-sf-field="Accompanying_Guest_Email__c"></div>
           </div>
         </div>
