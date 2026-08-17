@@ -2,6 +2,7 @@
   "use strict";
 
   var config = window.NTE_CONFIG || window.NTE27_CONFIG || {};
+  var pricingVersion = "NTE27-2026-08-17";
   var standardNames = {
     Company: "company",
     FirstName: "first_name",
@@ -156,6 +157,48 @@
     if (bookingField && !bookingField.value) bookingField.value = bookingReference();
   }
 
+  function setPricingField(form, api, value) {
+    var field = form.querySelector('[data-sf-field="' + api + '"]');
+    if (field) field.value = String(value);
+  }
+
+  function calculatePartnerPricing(selectedPrices) {
+    var total = 0;
+    var priceOnRequest = false;
+    selectedPrices.forEach(function (rawPrice) {
+      if (rawPrice === "poa") {
+        priceOnRequest = true;
+        return;
+      }
+      var price = Number(rawPrice);
+      if (Number.isFinite(price)) total += price;
+    });
+    return {packageTotal: total, total: total, priceOnRequest: priceOnRequest};
+  }
+
+  function calculateExhibitorPricing(options) {
+    options = options || {};
+    var priceOnRequest = options.spacePrice === "poa";
+    var spacePrice = priceOnRequest ? 0 : Number(options.spacePrice || 0);
+    var discounted = /Charity|Government|Blue Light/.test(options.category || "");
+    var socketCount = Math.max(0, Number(options.socketCount || 0));
+    var staffCount = Math.max(0, Number(options.staffCount || 0));
+    var powerUnitPrice = options.powerRequired === "Yes" ? (discounted ? 50 : 100) : 0;
+    var staffUnitPrice = options.staffRequired === "Yes" ? 50 : 0;
+    var powerTotal = powerUnitPrice * socketCount;
+    var staffTotal = staffUnitPrice * staffCount;
+    return {
+      spacePrice: Number.isFinite(spacePrice) ? spacePrice : 0,
+      powerUnitPrice: powerUnitPrice,
+      powerTotal: powerTotal,
+      staffUnitPrice: staffUnitPrice,
+      staffTotal: staffTotal,
+      total: (Number.isFinite(spacePrice) ? spacePrice : 0) + powerTotal + staffTotal,
+      discounted: discounted,
+      priceOnRequest: priceOnRequest
+    };
+  }
+
   function setupPackageSummary() {
     var checkboxes = Array.prototype.slice.call(document.querySelectorAll("[data-package-price]"));
     var countNode = document.querySelector("[data-package-count]");
@@ -163,10 +206,19 @@
     if (!checkboxes.length || !countNode || !totalNode) return;
     function sync() {
       var selected = checkboxes.filter(function (box) { return box.checked; });
-      var total = selected.reduce(function (sum, box) { var price = Number(box.dataset.packagePrice); return sum + (Number.isFinite(price) ? price : 0); }, 0);
-      var hasPoa = selected.some(function (box) { return box.dataset.packagePrice === "poa"; });
+      var pricing = calculatePartnerPricing(selected.map(function (box) { return box.dataset.packagePrice; }));
+      var total = pricing.total;
+      var hasPoa = pricing.priceOnRequest;
       countNode.textContent = selected.length ? selected.length + " package" + (selected.length === 1 ? "" : "s") + " selected" : "No packages selected";
       totalNode.textContent = total ? "Listed-price total: " + new Intl.NumberFormat("en-GB", {style:"currency",currency:"GBP",maximumFractionDigits:0}).format(total) + (hasPoa ? " plus price-on-request items" : "") : (hasPoa ? "Price on request" : "£0");
+      var form = checkboxes[0].form;
+      if (form) {
+        setPricingField(form, "Sponsor_Package_Total__c", pricing.packageTotal);
+        setPricingField(form, "Listed_Price_Total__c", pricing.total);
+        setPricingField(form, "Price_On_Request__c", hasPoa ? "1" : "0");
+        setPricingField(form, "Pricing_Status__c", hasPoa ? "Price on request" : "Calculated");
+        setPricingField(form, "Pricing_Version__c", pricingVersion);
+      }
     }
     checkboxes.forEach(function (box) { box.addEventListener("change", sync); });
     sync();
@@ -187,15 +239,29 @@
       var powerHelp = document.getElementById("power-question-help");
       if (powerLabel) powerLabel.textContent = powerIncluded ? "Do you need any additional power sockets for £100 + VAT per socket?" : "Do you need power on your stand for an additional £100 + VAT per socket?";
       if (powerHelp) powerHelp.textContent = powerIncluded ? "Your selected space includes standard power. Select Yes only if you need additional sockets. Charities, government and blue light organisations qualify for a 50% discount on additional sockets." : "Unless indicated here, power may not be possible. Charities, government and blue light organisations qualify for a 50% discount.";
-      var priceOnApplication = Boolean(space && space.dataset.price === "poa");
-      var base = space && !priceOnApplication ? Number(space.dataset.price || 0) : 0;
       var category = document.getElementById("organisation-category");
-      var discounted = category && /Charity|Government|Blue Light/.test(category.value);
       var socketCount = Number((document.getElementById("power-count") || {}).value || 0);
       var staffCount = Number((document.getElementById("additional-staff-count") || {}).value || 0);
-      var power = checkedValue("power-required") === "Yes" ? socketCount * (discounted ? 50 : 100) : 0;
-      var staff = checkedValue("additional-staff-required") === "Yes" ? staffCount * 50 : 0;
-      var total = base + power + staff;
+      var pricing = calculateExhibitorPricing({
+        spacePrice: space ? space.dataset.price : 0,
+        category: category ? category.value : "",
+        powerRequired: checkedValue("power-required"),
+        socketCount: socketCount,
+        staffRequired: checkedValue("additional-staff-required"),
+        staffCount: staffCount
+      });
+      var priceOnApplication = pricing.priceOnRequest;
+      var total = pricing.total;
+      var discounted = pricing.discounted;
+      setPricingField(form, "Exhibitor_Space_Price__c", pricing.spacePrice);
+      setPricingField(form, "Power_Socket_Unit_Price__c", pricing.powerUnitPrice);
+      setPricingField(form, "Power_Socket_Total__c", pricing.powerTotal);
+      setPricingField(form, "Additional_Staff_Unit_Price__c", pricing.staffUnitPrice);
+      setPricingField(form, "Additional_Staff_Total__c", pricing.staffTotal);
+      setPricingField(form, "Listed_Price_Total__c", pricing.total);
+      setPricingField(form, "Price_On_Request__c", priceOnApplication ? "1" : "0");
+      setPricingField(form, "Pricing_Status__c", priceOnApplication ? "Price on request" : "Calculated");
+      setPricingField(form, "Pricing_Version__c", pricingVersion);
       if (output) {
         if (!space) output.textContent = "Select a space to see an indicative ex-VAT total.";
         else if (priceOnApplication && total) output.textContent = "Listed add-ons: " + new Intl.NumberFormat("en-GB", {style:"currency",currency:"GBP"}).format(total) + " plus the space price on application.";
@@ -207,6 +273,20 @@
     }
     form.addEventListener("change", sync);
     form.addEventListener("input", sync);
+    sync();
+  }
+
+  function setupStaffEstimate() {
+    var form = document.querySelector('[data-form-kind="staff-update"]');
+    if (!form) return;
+    function sync() {
+      var required = (document.getElementById("staff-additional") || {}).value === "Yes";
+      var count = Number((document.getElementById("staff-additional-count") || {}).value || 0);
+      setPricingField(form, "Additional_Staff_Unit_Price__c", required ? 50 : 0);
+      setPricingField(form, "Additional_Staff_Total__c", required ? count * 50 : 0);
+      setPricingField(form, "Pricing_Version__c", pricingVersion);
+    }
+    form.addEventListener("change", sync);
     sync();
   }
 
@@ -339,10 +419,13 @@
   configureFieldConstraints();
   setupPackageSummary();
   setupExhibitorEstimate();
+  setupStaffEstimate();
   enableForms();
 
   window.NTEFormUtils = {
     eventCodeFor: eventCodeFor,
-    bookingReference: bookingReference
+    bookingReference: bookingReference,
+    calculatePartnerPricing: calculatePartnerPricing,
+    calculateExhibitorPricing: calculateExhibitorPricing
   };
 }());

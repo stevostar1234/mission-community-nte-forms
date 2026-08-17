@@ -38,6 +38,8 @@ window.NTE_CONFIG = {
     Industry_Body_Details__c: 255,
     Declaration_Name__c: 200,
     Partnership_Interest_Detail__c: 32768,
+    Exhibitor_Interest_Detail__c: 32768,
+    Exhibitor_Community_Contribution__c: 32768,
     Preferred_Contact_Time__c: 255,
     Accompanying_Guest_Name__c: 200,
     Accompanying_Guest_Email__c: 80,
@@ -148,7 +150,20 @@ window.NTE_CONFIG = {
     Haulier_Vehicle_Type__c: "00NAd00000Hy98XMAR",
     Haulier_Vehicle_Gross_Weight__c: "00NAd00000Hy98VMAR",
     Haulier_Vehicle_Dimensions__c: "00NAd00000Hy98UMAR",
-    Haulier_Vehicle_Registration__c: "00NAd00000Hy98WMAR"
+    Haulier_Vehicle_Registration__c: "00NAd00000Hy98WMAR",
+    Exhibitor_Interest_Areas__c: "00NAd00000HzgeuMAB",
+    Exhibitor_Interest_Detail__c: "00NAd00000HzgevMAB",
+    Exhibitor_Community_Contribution__c: "00NAd00000HzgetMAB",
+    Sponsor_Package_Total__c: "00NAd00000Hzgf3MAB",
+    Exhibitor_Space_Price__c: "00NAd00000HzgewMAB",
+    Power_Socket_Unit_Price__c: "00NAd00000HzgezMAB",
+    Power_Socket_Total__c: "00NAd00000HzgeyMAB",
+    Additional_Staff_Unit_Price__c: "00NAd00000HzgesMAB",
+    Additional_Staff_Total__c: "00NAd00000HzgerMAB",
+    Listed_Price_Total__c: "00NAd00000HzgexMAB",
+    Price_On_Request__c: "00NAd00000Hzgf0MAB",
+    Pricing_Status__c: "00NAd00000Hzgf1MAB",
+    Pricing_Version__c: "00NAd00000Hzgf2MAB"
   }
 };
 window.NTE27_CONFIG = window.NTE_CONFIG;

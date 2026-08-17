@@ -4,7 +4,7 @@
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
   <title>NTE27 Partner / Sponsor Application</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;550;650;750;800&amp;display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/styles.css?v=20260815-2">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;550;650;750;800&amp;display=swap" rel="stylesheet"><link rel="stylesheet" href="assets/styles.css?v=20260817-1">
 </head>
 <body>
   <header class="site-header">
@@ -15,7 +15,7 @@
   <main class="page-shell">
     <form class="main-column" data-web-to-lead data-lead-source="Customer Event" data-confirmation-preview="Thank you. We have received your NTE27 partner / sponsor application. This acknowledgement confirms receipt only; your application has not yet been approved. The NTE team will contact you after review.">
       <input type="hidden" value="Partner / Sponsor Application" data-sf-field="Web_Form_Type__c">
-      <input type="hidden" value="partner-sponsor-application-v4" data-sf-field="Form_Version__c">
+      <input type="hidden" value="partner-sponsor-application-v5" data-sf-field="Form_Version__c">
       <input type="hidden" data-sf-field="NTE_Event_Code__c">
       <input type="hidden" data-sf-field="Booking_Reference__c">
       <input type="hidden" data-combine-fields="partner-first-name,partner-last-name" data-sf-field="Sponsored_Name__c">
@@ -23,6 +23,17 @@
       <input type="hidden" data-switch-copy="partner-day-contact-same" data-copy-when-yes="partner-title" data-copy-when-no="partner-day-title" data-sf-field="Event_Contact_Title__c">
       <input type="hidden" data-switch-copy="partner-day-contact-same" data-copy-when-yes="partner-email" data-copy-when-no="partner-day-email" data-sf-field="Event_Contact_Email__c">
       <input type="hidden" data-switch-copy="partner-day-contact-same" data-copy-when-yes="partner-phone" data-copy-when-no="partner-day-mobile" data-sf-field="Event_Contact_Mobile__c">
+      <input type="hidden" value="0" data-sf-field="Sponsor_Package_Total__c">
+      <input type="hidden" value="0" data-sf-field="Exhibitor_Space_Price__c">
+      <input type="hidden" value="0" data-sf-field="Power_Socket_Unit_Price__c">
+      <input type="hidden" value="0" data-sf-field="Power_Socket_Total__c">
+      <input type="hidden" value="0" data-sf-field="Additional_Staff_Unit_Price__c">
+      <input type="hidden" value="0" data-sf-field="Additional_Staff_Total__c">
+      <input type="hidden" value="0" data-sf-field="Listed_Price_Total__c">
+      <input type="hidden" value="0" data-sf-field="Price_On_Request__c">
+      <input type="hidden" value="Calculated" data-sf-field="Pricing_Status__c">
+      <input type="hidden" value="NTE27-2026-08-17" data-sf-field="Pricing_Version__c">
+      <input type="hidden" value="Yes" data-sf-field="Invoice_Required__c">
 
       <section class="card"><h2>About NTE27</h2><p class="lede">NTE27 returns to The Wing at Silverstone on Monday 1 March 2027, following an event that welcomed more than 1,200 members of the Armed Forces community, over 200 exhibiting organisations and more than 100 Troops' Track Day supercars. Delivered by Mission Community and Mission Motorsport, the National Transition Event is the largest annual gathering of the UK Armed Forces community. Incorporating the Troops' Track Day, it brings together Service Leavers, Veterans, Reservists, spouses and partners, family members and Cadets with Armed Forces-friendly companies, government agencies and charities to exchange insight, lived experience and career opportunities. Unlike a traditional job fair, NTE27 is designed for meaningful networking, collaboration and lasting relationships.</p></section>
 
@@ -89,7 +100,7 @@
       <section class="card">
         <h2><span class="section-number">4</span>Quotation and invoicing</h2>
         <div class="grid">
-          <div class="field full"><label class="required" for="partner-quote">Does your organisation require a quotation before an invoice can be raised?</label><select id="partner-quote" required data-sf-field="Invoice_Required__c"><option value="">Select</option><option>Yes</option><option>No</option></select></div>
+          <div class="field full"><label class="required" for="partner-quote">Does your organisation require a quotation before an invoice can be raised?</label><select id="partner-quote" required data-sf-field="Quote_Required_for_PO__c"><option value="">Select</option><option>Yes</option><option>No</option></select></div>
           <div class="field"><label class="required" for="partner-invoice-company">Organisation name for quotation/invoicing</label><input id="partner-invoice-company" required data-sf-field="Invoiced_Company__c"></div>
           <div class="field"><label class="required" for="partner-invoice-person">Person the quotation/invoice should be addressed to</label><input id="partner-invoice-person" required data-sf-field="Invoiced_Person__c"></div>
           <div class="field full"><label class="required" for="partner-invoice-address">Postal address, including postcode</label><textarea id="partner-invoice-address" required data-sf-field="Invoice_Address__c"></textarea></div>
@@ -107,6 +118,6 @@
     </form>
   </main>
   <footer class="site-footer">Questions? <a href="mailto:nte@missioncommunity.org">nte@missioncommunity.org</a></footer>
-    <script src="assets/config.js?v=20260815-2"></script><script src="assets/forms.js?v=20260815-2"></script>
+    <script src="assets/config.js?v=20260817-1"></script><script src="assets/forms.js?v=20260817-1"></script>
 </body>
 </html>
